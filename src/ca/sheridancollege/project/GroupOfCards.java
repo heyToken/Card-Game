@@ -5,8 +5,8 @@
  */
 package ca.sheridancollege.project;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A concrete class that represents any grouping of cards for a Game. HINT, you might want to subclass this more than
@@ -17,39 +17,61 @@ import java.util.Collections;
  */
 public class GroupOfCards {
 
-    //The group of cards, stored in an ArrayList
-    private ArrayList<Card> cards;
-    private int size;//the size of the grouping
+  //The group of cards, stored in an ArrayList
+  private ArrayList < Card > cards;
+  public ArrayList < Card > removedCards;
 
-    public GroupOfCards(int size) {
-        this.size = size;
+  public ArrayList < Card > getMatchingCards(ArrayList < Card > hand, String request) {
+    ArrayList < Card > matchingCards = new ArrayList < > ();
+
+    for (Card card: hand) {
+      if (card.getRank().toString().equalsIgnoreCase(request)) {
+        matchingCards.add(card);
+      }
+    }
+    return matchingCards;
+  }
+
+  private int size; //the size of the grouping
+
+  public GroupOfCards(int size) {
+    this.size = size;
+    initializeDeck();
+  }
+
+  public boolean isEmpty() {
+    return cards.isEmpty();
+  }
+
+  private void initializeDeck() {
+    cards = new ArrayList();
+    for (Card.Suit suit: Card.Suit.values()) {
+      for (Card.Rank rank: Card.Rank.values()) {
+        cards.add(new Card(suit, rank));
+      }
+    }
+    shuffle();
+  }
+  public ArrayList < Card > getCards(int handSize) {
+    ArrayList < Card > deck = new ArrayList < > (cards); // Create a copy of the deck
+    ArrayList < Card > hand = new ArrayList < > ();
+
+    for (int i = 0; i < handSize; i++) {
+      if (!cards.isEmpty()) {
+        Card drawnCard = cards.remove(0); // Remove and add to the hand
+        hand.add(drawnCard);
+      }
+
     }
 
-    /**
-     * A method that will get the group of cards as an ArrayList
-     *
-     * @return the group of cards.
-     */
-    public ArrayList<Card> getCards() {
-        return cards;
-    }
+    return hand;
+  }
 
-    public void shuffle() {
-        Collections.shuffle(cards);
-    }
+  public void setHand(ArrayList < Card > hand) {
+    this.cards = hand;
+  }
 
-    /**
-     * @return the size of the group of cards
-     */
-    public int getSize() {
-        return size;
-    }
-
-    /**
-     * @param size the max size for the group of cards
-     */
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-}//end class
+  public void shuffle() {
+    Collections.shuffle(cards);
+  }
+}

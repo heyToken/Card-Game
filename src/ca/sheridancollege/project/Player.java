@@ -11,39 +11,57 @@ package ca.sheridancollege.project;
  * @author dancye
  * @author Paul Bonenfant Jan 2020
  */
+
+import java.util.*;
+
 public abstract class Player {
 
-    private String name; //the unique name for this player
+  private String name; // the unique name for this player
 
-    /**
-     * A constructor that allows you to set the player's unique ID
-     *
-     * @param name the unique ID to assign to this player.
-     */
-    public Player(String name) {
-        this.name = name;
+  private static Set < String > usedNames = new HashSet < > (); // to track used player names
+
+  public Player() {
+    setNameWithInput();
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    checkAndSetName(name);
+  }
+
+  private void checkAndSetName(String newName) {
+    if (usedNames.contains(newName)) {
+      throw new IllegalArgumentException("Player name already taken: " + newName);
     }
 
-    /**
-     * @return the player name
-     */
-    public String getName() {
-        return name;
+    if (name != null) {
+      usedNames.remove(name);
     }
 
-    /**
-     * Ensure that the playerID is unique
-     *
-     * @param name the player name to set
-     */
-    public void setName(String name) {
-        this.name = name;
+    name = newName;
+    usedNames.add(name);
+  }
+
+  private void setNameWithInput() {
+    Scanner scanner = new Scanner(System.in);
+    while (true) {
+      System.out.println("Please enter name for Player");
+      String newName = scanner.nextLine();
+
+      try {
+        checkAndSetName(newName);
+        break; // Break out of the loop if name is valid
+      } catch (IllegalArgumentException e) {
+        System.out.println("Error: " + e.getMessage());
+      }
     }
-
-    /**
-     * The method to be overridden when you subclass the Player class with your specific type of Player and filled in
-     * with logic to play your game.
-     */
-    public abstract void play();
-
+  }
 }
+
+/**
+ * The method to be overridden when you subclass the Player class with your specific type of Player and filled in
+ * with logic to play your game.
+ */
